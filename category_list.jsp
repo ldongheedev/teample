@@ -321,7 +321,6 @@
     </div>
     <div class="header-links">
         <input type="button" value="로그인/회원가입" onclick="location.href='loginpage.jsp'">
-        <input type="button" value="내상점" onclick="location.href='mystore.jsp'" >
         <input type="button" value="" onclick="location.href='loginpage.jsp'"
             style="background: url('<%= request.getContextPath() %>/images/bell.png');
                    background-size: contain;

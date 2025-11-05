@@ -1,4 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
+<%@ page import="java.sql.*" %>
+<%@ page import="java.text.DecimalFormat" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -10,7 +12,6 @@
     <script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
 
     <style>
-        /* CSS 시작 */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
         
         body {
@@ -33,14 +34,12 @@
             object-fit: contain; 
         }
         
-        /* 헤더 링크 + 드롭다운 CSS */
         .header-links {
             display: flex;
             align-items: center;
             gap: 15px;
         }
         
-        /* 환영 메시지 스타일 */
         .welcome-message {
             font-size: 14px;
             color: #333;
@@ -95,7 +94,6 @@
             display: block;
         }
 
-        /* 햄버거 메뉴 및 검색창 CSS */
         .search-area-container {
             margin: 30px 0 0 0;
             padding: 0 40px;
@@ -182,7 +180,6 @@
             font-size: 16px;
         }
         
-        /* 스와이퍼 */
         .swiper {
             width: 100%;
             max-width: 700px; 
@@ -195,7 +192,6 @@
             background-color: #eee;
         }
 
-        /* 상품 추천 섹션 */
         .recommend-section {
             max-width: 1200px;
             margin: 40px auto;
@@ -207,7 +203,6 @@
             color: #333;
         }
         
-        /* 상품 그리드 (반응형) */
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -218,15 +213,41 @@
             background-color: #fff;
             border: 1px solid #eee;
             border-radius: 8px;
-            height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #aaa;
-            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow: hidden; 
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .product-card a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .product-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: contain;
+            background-color: #ffffff;
+        }
+        .product-card .info {
+            padding: 15px;
+        }
+        .product-card .info .name {
+            font-size: 16px;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .product-card .info .price {
+            font-size: 15px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 5px;
         }
         
-        /* 푸터 */
         footer {
             background-color: #f1f1f1;
             padding: 40px;
@@ -245,7 +266,6 @@
             text-decoration: none;
             color: #555;
         }
-        /* 관리자 페이지 링크 스타일 */
         .admin-link {
             font-weight: bold;
             color: #2c7be5; 
@@ -279,9 +299,9 @@
     <header>
         <div class="logo">
             <a href="main_page.jsp">
-    		    <img src="<%= request.getContextPath() %>/images/logo.png" style="height: 60px; width: 200px; object-fit: contain;">
+                <img src="<%= request.getContextPath() %>/images/logo.png" style="height: 60px; width: 200px; object-fit: contain;">
             </a>
-		</div>
+        </div>
         <div class="header-links">
         
             <%
@@ -290,9 +310,9 @@
                 <input type="button" value="로그인/회원가입" onclick="location.href='loginpage.jsp'">
                 
                 <input type="button" value="" onclick="location.href='loginpage.jsp'"
-                   style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
-                   background-size: contain;
-                   width: 40px; height: 40px; border: none; cursor: pointer;"
+                    style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
+                    background-size: contain;
+                    width: 40px; height: 40px; border: none; cursor: pointer;"
                 />
             <%
             } else {
@@ -301,20 +321,21 @@
                     <%= (String)session.getAttribute("userName") %>님, 환영합니다.
                 </div>
 
+                <input type="button" value="" onclick="location.href='notifications.jsp'"
+                    style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
+                    background-size: contain;
+                    width: 40px; height: 40px; border: none; cursor: pointer;"
+                />
+                
                 <div class="dropdown">
                     <img src="<%= request.getContextPath() %>/images/user.png" alt="User" class="dropdown-toggle" onclick="toggleDropdown()">
                     
                     <div id="myDropdown" class="dropdown-content">
-                        <a href="#">마이페이지</a>
+                        <a href="mypage.jsp">마이페이지</a>
                         <a href="logout.jsp">로그아웃</a>
                     </div>
                 </div>
                 
-                <input type="button" value="" onclick="location.href='notifications.jsp'"
-                   style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
-                   background-size: contain;
-                   width: 40px; height: 40px; border: none; cursor: pointer;"
-                />
             <%
             }
             %>
@@ -329,17 +350,17 @@
                 <span></span>
             </button>
             <nav class="category-nav" id="category-menu">
-            <ul>
-                <li><a href="category_list.jsp?category=all">전체 카테고리</a></li>
-                <li><a href="category_list.jsp?category=clothing">의류</a></li>
-                <li><a href="category_list.jsp?category=food">식품</a></li>
-                <li><a href="category_list.jsp?category=accessories">액세서리</a></li>
-                <li><a href="category_list.jsp?category=digital">디지털/가전제품</a></li>
-                <li><a href="category_list.jsp?category=sports">스포츠 용품</a></li>
-                <li><a href="category_list.jsp?category=pet">애완동물용품</a></li>
-                <li><a href="category_list.jsp?category=talent">재능</a></li>
-            </ul>
-        </nav>
+                <ul>
+                    <li><a href="#" onclick="return false;">전체 카테고리</a></li>
+                    <li><a href="category_list.jsp?category_id=clothing">의류</a></li>
+                    <li><a href="category_list.jsp?category_id=food">식품</a></li>
+                    <li><a href="category_list.jsp?category_id=accessory">액세서리</a></li>
+                    <li><a href="category_list.jsp?category_id=digital">디지털/가전제품</a></li>
+                    <li><a href="category_list.jsp?category_id=sports">스포츠 용품</a></li>
+                    <li><a href="category_list.jsp?category_id=pet">애완동물 용품</a></li>
+                    <li><a href="category_list.jsp?category_id=talent">재능</a></li>
+                </ul>
+            </nav>
         </div>
 
         <div class="search-bar">
@@ -374,13 +395,65 @@
         <div class="swiper-button-prev"></div>
         <div class="swiper-button-next"></div>
     </div>
-
     <section class="recommend-section">
         <h2>상품 추천</h2>
         <div class="product-grid">
-            <% for (int i = 0; i < 8; i++) { %>
-                <div class="product-card">상품 추천 이미지</div>
-            <% } %>
+            <%
+                Connection conn = null;
+                PreparedStatement pstmt = null;
+                ResultSet rs = null;
+                boolean hasProducts = false;
+                DecimalFormat formatter = new DecimalFormat("#,###"); 
+
+                try {
+                    Class.forName("org.mariadb.jdbc.Driver");
+                    conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                    
+                    String sql = "SELECT product_id, product_name, price, main_image_url FROM Product " +
+                                 "WHERE is_sold_out = FALSE ORDER BY created_at DESC";
+                    
+                    pstmt = conn.prepareStatement(sql);
+                    rs = pstmt.executeQuery();
+                    
+                    while (rs.next()) {
+                        hasProducts = true;
+                        int pId = rs.getInt("product_id");
+                        String pName = rs.getString("product_name");
+                        int pPrice = rs.getInt("price");
+                        String pImage = rs.getString("main_image_url");
+                        
+                        if (pImage == null || pImage.trim().isEmpty()) {
+                            pImage = request.getContextPath() + "/images/logo.png";
+                        } else {
+                            // 이미지가 /uploads/product/... 와 같이 저장되어 있다고 가정하고 컨텍스트 경로를 앞에 붙임
+                            pImage = request.getContextPath() + pImage; 
+                        }
+            %>
+                        <div class="product-card">
+                            <a href="product_detail.jsp?product_id=<%= pId %>">
+                                <img src="<%= pImage %>" alt="<%= pName %>">
+                                <div class="info">
+                                    <p class="name"><%= pName %></p>
+                                    <p class="price"><%= formatter.format(pPrice) %>원</p>
+                                </div>
+                            </a>
+                        </div>
+            <%
+                    } 
+                    
+                    if (!hasProducts) {
+                        out.println("<p>현재 등록된 상품이 없습니다.</p>");
+                    }
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    out.println("<p style='color:red;'>상품 목록을 불러오는 중 오류가 발생했습니다.</p>");
+                } finally {
+                    if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+                    if (pstmt != null) try { pstmt.close(); } catch (SQLException ignore) {}
+                    if (conn != null) try { conn.close(); } catch (SQLException ignore) {}
+                }
+            %>
         </div>
     </section>
     
@@ -394,21 +467,21 @@
             <p>이용약관 / 개인정보처리방침</p>
         </div>
         <%
-    	String companyIntro = "회사소개";
-		String notice = "공지사항";
-    	String question = "1:1 문의";
-    	String faq = "FAQ";
-		%>
-		<div style="display: flex; gap: 40px;">
-    		<div class="footer-section">
-        		<h4>ABOUT</h4>
-        		<a href="#"> <%= companyIntro %> </a><br>
-        		<a href="#"> <%= notice %> </a><br>
-    		</div>
-    		<div class="footer-section">
-        		<h4>SUPPORT</h4>
-        		<a href="#"> <%= question %> </a><br>
-        		<a href="#"> <%= faq %> </a>
+        String companyIntro = "회사소개";
+        String notice = "공지사항";
+        String question = "1:1 문의";
+        String faq = "FAQ";
+        %>
+        <div style="display: flex; gap: 40px;">
+            <div class="footer-section">
+                <h4>ABOUT</h4>
+                <a href="#"> <%= companyIntro %> </a><br>
+                <a href="#"> <%= notice %> </a><br>
+            </div>
+            <div class="footer-section">
+                <h4>SUPPORT</h4>
+                <a href="#"> <%= question %> </a><br>
+                <a href="#"> <%= faq %> </a>
                 
                 <%
                     String isAdmin = (String) session.getAttribute("isAdmin");
@@ -419,12 +492,11 @@
                 <%
                     }
                 %>
-    		</div>
-		</div>
+            </div>
+        </div>
     </footer>
 
     <script>
-        // 스와이퍼 초기화
         const swiper = new Swiper(".mySwiper", {
             loop: true,
             autoplay: {
@@ -440,7 +512,6 @@
             },
         });
 
-        // 햄버거 메뉴 (간단한 버전)
         const menuArea = document.getElementById('menuArea');
         const categoryMenu = document.getElementById('category-menu');
 

@@ -1,4 +1,3 @@
-
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
     
 <!DOCTYPE html>
@@ -7,9 +6,8 @@
     <meta charset="UTF-8">
     <title>회원가입</title>
     <style>
-        /* (스타일 시트 코드는 변경 없음. 이전 코드 그대로 사용) */
+        /* (스타일 시트는 원본과 동일하게 유지) */
         @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;700&display=swap');
-        
         body {
             font-family: 'Noto Sans KR', sans-serif;
             background-color: #f9f9f9;
@@ -20,7 +18,6 @@
             margin: 0;
             color: #333;
         }
-
         .join-container {
             width: 500px;
             background-color: #ffffff;
@@ -28,14 +25,12 @@
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.05);
         }
-
         h2 {
             text-align: center;
             font-size: 24px;
             font-weight: 700;
             margin-bottom: 20px;
         }
-
         .section-title {
             font-weight: 700;
             margin-bottom: 10px;
@@ -43,33 +38,28 @@
             display: inline-block;
             padding-bottom: 5px;
         }
-
         table {
             width: 100%;
             border-collapse: collapse;
             border-top: 2px solid #333;
         }
-
         td {
             border: 1px solid #ccc;
             padding: 15px 10px;
             vertical-align: middle;
         }
-
         table tr td:first-child {
             width: 30%;
             background-color: #f4f4f4;
             font-weight: 500;
             padding-left: 20px;
         }
-        
         .required::before {
             content: "*";
             color: red; 
             margin-right: 5px;
             font-size: 14px;
         }
-
         input[type="text"],
         input[type="password"],
         input[type="email"] {
@@ -80,28 +70,30 @@
             box-sizing: border-box;
         }
         
-        input[name="id"], 
+        /* ✨ 1. 아이디 입력창 너비 조절 (버튼 공간 확보) */
+        input[name="id"] {
+             width: 180px;
+             margin-right: 5px; 
+        }
+        
         input[name="pw"],
         input[name="pw_check"],
         input[name="phone"] {
-            width: 180px; 
+            width: 180px;
         }
         
         input[name="nickname"] {
             width: 180px;
             margin-right: 5px; 
         }
-
         input[name="email"],
         input[name="addr_detail"] {
-            width: 100%; 
+            width: 100%;
         }
-
         .address-row input[name="addr_zip"] {
-             width: 100px; 
+             width: 100px;
              margin-right: 5px;
         }
-        
         .zipcode-btn, .check-btn {
             padding: 10px 15px;
             background-color: #a0a0a0;
@@ -112,11 +104,9 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-
         .zipcode-btn:hover, .check-btn:hover {
             background-color: #888888;
         }
-
         .button-area {
             text-align: center;
             margin-top: 30px;
@@ -124,7 +114,6 @@
             justify-content: center;
             gap: 20px;
         }
-
         .button-area input[type="button"] {
             padding: 12px 30px;
             border: 1px solid #ccc;
@@ -135,11 +124,9 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
         .button-area input[type="button"]:hover {
             background-color: #f0f0f0;
         }
-
         .button-area input[type="submit"] {
             padding: 12px 30px;
             background-color: #81c147;
@@ -151,23 +138,26 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        
         .button-area input[type="submit"]:hover {
             background-color: #6a9c39;
         }
-
     </style>
     
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 
     <script>
-    // 닉네임 중복 확인 상태를 저장하는 변수 (복구)
+    // ✨ 2. 아이디 중복 확인 상태 변수 추가
+    var isIdChecked = false;
     var isNicknameChecked = false;
+    
+    // ✨ 3. 아이디 입력 필드 값 변경 감지 함수 추가
+    function resetIdCheck() {
+        isIdChecked = false;
+        document.forms[0]["id"].readOnly = false;
+    }
 
-    // 닉네임 입력 필드 값 변경 감지 (복구)
     function resetNicknameCheck() {
         isNicknameChecked = false;
-        // 입력 값이 변경되면 읽기 전용 상태를 해제하여 다시 입력할 수 있도록 합니다.
         document.forms[0]["nickname"].readOnly = false;
     }
 
@@ -192,7 +182,6 @@
                     extraRoadAddr = ' (' + extraRoadAddr + ')';
                 }
 
-                // 우편번호와 주소 정보를 해당 필드에 넣기
                 document.getElementsByName('addr_zip')[0].value = data.zonecode; 
                 document.getElementsByName('addr_base')[0].value = roadAddr + extraRoadAddr; 
                 document.getElementsByName('addr_detail')[0].focus();
@@ -202,9 +191,7 @@
 
 
     function validateForm() {
-        var form = document.forms[0]; 
-        
-        // 필수 항목 필드 목록
+        var form = document.forms[0];
         var requiredFields = [
             { name: "id", message: "아이디를 입력해주세요." },
             { name: "pw", message: "비밀번호를 입력해주세요." },
@@ -218,7 +205,6 @@
         // 1. 유효성 검사 루프
         for (var i = 0; i < requiredFields.length; i++) {
             var field = form[requiredFields[i].name];
-            
             if (field && field.value.trim() === "") {
                 alert(requiredFields[i].message);
                 field.focus();
@@ -226,6 +212,13 @@
             }
         }
         
+        // ✨ 4. 아이디 중복 확인 여부 검사 (추가)
+        if (!isIdChecked) {
+            alert("아이디 중복 확인을 해주세요.");
+            form["id"].focus();
+            return false;
+        }
+
         // 2. 비밀번호와 비밀번호 확인 일치 여부 검사
         if (form["pw"].value !== form["pw_check"].value) {
             alert("비밀번호와 비밀번호 확인 값이 일치하지 않습니다.");
@@ -233,18 +226,54 @@
             return false;
         }
         
-        // 3. 닉네임 중복 확인 여부 검사 (복구)
+        // 3. 닉네임 중복 확인 여부 검사
         if (!isNicknameChecked) {
             alert("닉네임 중복 확인을 해주세요.");
             form["nickname"].focus();
             return false;
         }
 
-        // 모든 검사 통과 시 폼 제출 허용
         return true;
     }
     
-    // 닉네임 중복 확인 함수 (AJAX를 통해 nickname_check.jsp와 통신) (복구)
+    // ✨ 5. 아이디 중복 확인 함수 (AJAX) 추가
+    function checkId() {
+        var idInput = document.forms[0]["id"];
+        var id = idInput.value.trim();
+
+        if (id === "") {
+            alert("아이디를 먼저 입력해주세요.");
+            idInput.focus();
+            isIdChecked = false;
+            return;
+        }
+        
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "id_check.jsp?id=" + encodeURIComponent(id), true);
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                var response = xhr.responseText.trim();
+                if (response === "true") {
+                    alert("사용 가능한 아이디입니다.");
+                    isIdChecked = true;
+                    idInput.readOnly = true;
+                } else if (response === "false") {
+                    alert("이미 사용 중인 아이디입니다.");
+                    isIdChecked = false;
+                    idInput.focus();
+                } else if (response.startsWith("error:")) {
+                    alert("오류: " + response.substring(6));
+                    isIdChecked = false;
+                } else {
+                    alert("알 수 없는 오류가 발생했습니다.");
+                    isIdChecked = false;
+                }
+            }
+        };
+        xhr.send();
+    }
+    
+    // 닉네임 중복 확인 함수 (AJAX)
     function checkNickname() {
         var nicknameInput = document.forms[0]["nickname"];
         var nickname = nicknameInput.value.trim();
@@ -257,18 +286,14 @@
         }
         
         var xhr = new XMLHttpRequest();
-        // ⚠️ 이 파일(nickname_check.jsp)이 반드시 존재해야 합니다!
         xhr.open("GET", "nickname_check.jsp?nickname=" + encodeURIComponent(nickname), true);
-        
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4 && xhr.status === 200) {
                 var response = xhr.responseText.trim();
-
                 if (response === "true") {
                     alert("사용 가능한 닉네임입니다.");
                     isNicknameChecked = true;
-                    // 사용 가능 시 입력 필드 비활성화(Fix)
-                    nicknameInput.readOnly = true; 
+                    nicknameInput.readOnly = true;
                 } else if (response === "false") {
                     alert("이미 사용 중인 닉네임입니다.");
                     isNicknameChecked = false;
@@ -282,7 +307,6 @@
                 }
             }
         };
-        
         xhr.send();
     }
     </script>
@@ -299,7 +323,8 @@
             <tr>
                 <td class="required">아이디</td>
                 <td>
-                    <input type="text" name="id" placeholder="아이디를 입력하세요">
+                    <input type="text" name="id" placeholder="아이디를 입력하세요" oninput="resetIdCheck()">
+                    <input type="button" value="아이디 확인" class="check-btn" onclick="checkId()">
                 </td>
             </tr>
             <tr>

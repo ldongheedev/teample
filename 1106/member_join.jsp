@@ -20,8 +20,8 @@
     String addr_base = request.getParameter("addr_base");
     String addr_detail = request.getParameter("addr_detail");
     
-    // ⚠️ 경고: 실제 운영 환경에서는 반드시 비밀번호를 해싱(암호화)하여 저장해야 합니다.
-    String encryptedPw = pw; // 예시를 위해 임시로 평문 사용
+    // ⚠️ 실제 서비스 시 비밀번호는 반드시 해싱(암호화)해야 합니다.
+    String encryptedPw = pw; // 임시로 평문 사용
     
     Connection conn = null;
     PreparedStatement pstmt = null;
@@ -31,16 +31,14 @@
         Class.forName("org.mariadb.jdbc.Driver");
         conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
         
-        // ===================================================
-        // 2. 아이디 중복 확인 (닉네임 중복은 클라이언트/AJAX에서 처리됨)
-        // ===================================================
+        // 2. 아이디 중복 확인 (서버 단에서 한 번 더 체크)
         String checkIdSql = "SELECT id FROM member WHERE id = ?";
         pstmt = conn.prepareStatement(checkIdSql);
         pstmt.setString(1, id);
         rs = pstmt.executeQuery();
 
         if (rs.next()) {
-            // 아이디 중복 시 처리
+            // 아이디 중복 시
 %>
 			<script>
 			    alert('이미 등록된 아이디입니다.');
@@ -48,12 +46,8 @@
 			</script>
 <% 
         } else {
-            // ===================================================
             // 3. 회원 데이터 삽입
-            // ===================================================
-            
-            // ID 체크용 자원 정리
-            rs.close(); 
+            rs.close();
             pstmt.close(); 
             
             String insertSql = "INSERT INTO member (id, pw, nickname, email, phone, addr_zip, addr_base, addr_detail) "
@@ -75,8 +69,10 @@
 %>
                 <script>
                     alert('가입이 완료되었습니다.');
-                    window.opener.location.reload(); 
-                    window.close(); // 팝업 창 닫기
+                    // ✨ 1. 부모 창을 로그인 페이지로 이동
+                    window.opener.location.href = 'loginpage.jsp';
+                    // ✨ 2. 현재 팝업 창 닫기
+                    window.close(); 
                 </script>
 <%
             } else {

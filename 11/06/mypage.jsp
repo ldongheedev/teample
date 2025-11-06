@@ -1,63 +1,19 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %> 
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="java.lang.StringBuilder" %> <%-- HTML 문자열을 만들기 위해 추가 --%>
+<%@ page import="java.sql.*" %>
 
 <%
     // 1. (보안) 로그인 세션 확인
     String userId = (String) session.getAttribute("userId");
     
+    // 로그인이 되어있지 않으면 로그인 페이지로 튕겨내기
     if (userId == null) {
 %>
         <script>
             alert("로그인이 필요합니다.");
-            location.href = "loginpage.jsp";
+            location.href = "loginpage.jsp"; // 로그인 페이지로 이동
         </script>
 <%
-        return; 
-    }
-%>
-
-<%! 
-    // ✨ 2. (오류 수정) <%! ... 
-%>
-
-<%
-    // ✨ 3. (로직 변경) Category 클래스 대신, <option> 태그를 담을 StringBuilder를 생성합니다.
-    StringBuilder categoryOptions = new StringBuilder();
-
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-    
-    try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
-        
-        // (대소문자 수정) 'FROM category' (소문자 c)
-        String sql = "SELECT category_id, category_name FROM category WHERE is_active = TRUE ORDER BY sort_order, category_name";
-        pstmt = conn.prepareStatement(sql);
-        rs = pstmt.executeQuery();
-        
-        // ✨ 4. (로직 변경) DB 조회와 동시에 <option> 태그 문자열을 만듭니다.
-        // (이 코드는 DB의 category 테이블에 '의류', '식품' 등이 INSERT 되어 있어야 합니다.)
-        while (rs.next()) {
-            String catId = rs.getString("category_id");
-            String catName = rs.getString("category_name");
-            
-            categoryOptions.append("<option value='");
-            categoryOptions.append(catId);       // 예: <option value='clothing'
-            categoryOptions.append("'>");
-            categoryOptions.append(catName);     // 예: >의류
-            categoryOptions.append("</option>"); // 예: </option>
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        categoryOptions.append("<option value=''>!카테고리 로딩 실패!</option>");
-    } finally {
-        if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
-        if (pstmt != null) try { pstmt.close(); } catch (SQLException ignore) {}
-        if (conn != null) try { conn.close(); } catch (SQLException ignore) {}
+        return; // (중요) HTML 코드 실행 중단
     }
 %>
 
@@ -65,7 +21,7 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>마이페이지 - 상품 등록</title>
+    <title>마이페이지</title>
     
     <style>
         /* CSS 시작 */
@@ -78,7 +34,7 @@
             color: #333;
         }
 
-        /* --- 헤더 스타일 --- */
+        /* --- 헤더 스타일 (main_page.jsp에서 복사) --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -144,7 +100,7 @@
             display: block;
         }
 
-        /* --- 마이페이지 레이아웃 --- */
+        /* --- 마이페이지 레이아웃 (admin_page.jsp와 유사) --- */
         .mypage-wrapper {
             display: flex;
             max-width: 1400px;
@@ -152,6 +108,8 @@
             margin: 20px auto;
             gap: 20px;
         }
+
+        /* 마이페이지 사이드바 */
         .mypage-sidebar {
             width: 220px;
             flex-shrink: 0;
@@ -186,10 +144,12 @@
             background-color: #f5f5f5;
         }
         .mypage-sidebar li.active a {
-            background-color: #81c147; 
+            background-color: #81c147; /* 메인 색상 */
             color: white;
             font-weight: 500;
         }
+
+        /* 마이페이지 컨텐츠 영역 */
         .mypage-content {
             flex-grow: 1;
             background-color: #ffffff;
@@ -197,6 +157,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border-radius: 8px;
         }
+        
         .mypage-content h2 {
             font-size: 24px;
             margin-top: 0;
@@ -205,80 +166,82 @@
             padding-bottom: 10px;
         }
         
-        /* --- 상품 등록 폼 CSS --- */
-        .product-form table {
-            width: 100%;
-            border-collapse: collapse;
-            border-top: 2px solid #333;
-        }
-        .product-form th, .product-form td {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-        }
-        .product-form th {
-            width: 150px;
-            background-color: #fcfcfc;
-            text-align: left;
-            vertical-align: top;
-            font-weight: 500;
-        }
-        .product-form input[type="text"],
-        .product-form input[type="number"],
-        .product-form select,
-        .product-form textarea {
-            width: 100%;
-            padding: 10px;
-            font-size: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box; 
-        }
-        .product-form textarea {
-            height: 200px;
-            resize: vertical;
-        }
-        .product-form input[type="file"] {
-            font-size: 14px;
-            margin-top: 5px;
-        }
-        .image-upload-area div {
-            margin-bottom: 10px;
-        }
-        .image-upload-area label {
-            font-weight: 500;
-            font-size: 14px;
-            color: #555;
-        }
-        .shipping-option label {
-            margin-right: 15px;
-            font-size: 15px;
-        }
-        .shipping-option input[type="radio"] {
-            margin-right: 5px;
-        }
-        .form-buttons {
+        /* '내 상품' 리스트 스타일 */
+        .product-list {
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             gap: 15px;
-            margin-top: 30px;
         }
-        .form-buttons input {
-            padding: 12px 30px;
+        .product-list-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .product-list-item img {
+            width: 80px;
+            height: 80px;
+            background-color: #e0e0e0;
+            border-radius: 6px;
+            margin-right: 20px;
+            flex-shrink: 0;
+            object-fit: cover;
+        }
+        .product-list-item .info {
+            flex-grow: 1;
+        }
+        .product-list-item .info .name {
             font-size: 16px;
             font-weight: 500;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            cursor: pointer;
-        }
-        .form-buttons input[type="submit"] {
-            background-color: #81c147;
-            color: white;
-            border-color: #81c147;
-        }
-        .form-buttons input[type="button"] {
-            background-color: #fff;
             color: #333;
         }
+        /* 상품명에 링크 스타일 추가 */
+        .product-list-item .info .name a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .product-list-item .info .name a:hover {
+            text-decoration: underline;
+        }
+        .product-list-item .info .price {
+            font-size: 14px;
+            color: #555;
+            margin-top: 5px;
+        }
+        .product-list-item .edit-btn {
+            padding: 8px 15px;
+            background-color: #a0a0a0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        /* '최근 본 상품' 그리드 */
+        .recent-product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .recent-product-card {
+            border: 1px solid #eee;
+            border-radius: 8px;
+        }
+        .recent-product-card .img-placeholder {
+            width: 100%;
+            height: 120px;
+            background-color: #e0e0e0;
+            border-radius: 6px 6px 0 0;
+        }
+        .recent-product-card p {
+            font-size: 14px;
+            padding: 10px;
+            margin: 0;
+            color: #333;
+        }
+
 
         /* --- 푸터 스타일 --- */
         footer {
@@ -288,7 +251,7 @@
             justify-content: space-between;
             font-size: 14px;
             color: #555;
-            margin-top: 50px; 
+            margin-top: 50px;
         }
         .footer-section h4 {
             margin-bottom: 10px;
@@ -306,7 +269,7 @@
             margin-top: 10px;
             display: inline-block;
         }
-         .admin-link:hover {
+        .admin-link:hover {
             text-decoration: underline;
         }
     </style>
@@ -361,17 +324,20 @@
                 <li><a href="#" onclick="window.open('member_update_form.jsp','','width=600,height=800'); return false;">정보 수정</a></li>
                 <li><a href="#">회원 탈퇴</a></li>
             </ul>
+            
             <h3>쇼핑정보</h3>
             <ul>
                 <li><a href="#">찜리스트</a></li>
                 <li><a href="#">거래조회</a></li>
             </ul>
+            
             <h3>상품관리</h3>
             <ul>
-                <li class="active"><a href="product_add_form.jsp">상품 등록</a></li>
+                <li><a href="product_add_form.jsp">상품 등록</a></li>
                 <li><a href="#">상품 정보 수정</a></li>
                 <li><a href="#">상품 삭제</a></li>
             </ul>
+
             <h3>고객센터</h3>
             <ul>
                 <li><a href="#">1:1 문의</a></li>
@@ -380,77 +346,79 @@
         </nav>
         
         <main class="mypage-content">
-            <h2>상품 등록</h2>
             
-            <form class="product-form" action="product_add_action.jsp" method="post" enctype="multipart/form-data">
-                <table>
-                    <tbody>
-                        <tr>
-                            <th>카테고리</th>
-                            <td>
-                                <select name="category_id" required>
-                                    <option value="">-- 카테고리를 선택하세요 --</option>
-                                    <%
-                                        // ✨ 5. (오류 수정) 클래스/for문 대신, 위에서 만든 HTML 문자열을 바로 출력합니다.
-                                        out.print(categoryOptions.toString());
-                                    %>
-                                </select>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>상품명</th>
-                            <td>
-                                <input type="text" name="product_name" placeholder="상품 제목을 입력하세요" required>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>가격</th>
-                            <td>
-                                <input type="number" name="price" placeholder="숫자만 입력" required>
-                            </td>
-                        </tr>
+            <h2>내 상품</h2>
+            <div class="product-list">
+                <%
+                    Connection conn = null;
+                    PreparedStatement pstmt = null;
+                    ResultSet rs = null;
+                    boolean hasProducts = false;
+                    
+                    try {
+                        Class.forName("org.mariadb.jdbc.Driver");
+                        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
                         
-                        <tr>
-                            <th>택배비</th>
-                            <td class="shipping-option">
-                                <input type="radio" name="shipping_included" value="false" id="ship_no" checked>
-                                <label for="ship_no">택배비 미포함 (X)</label>
-                                
-                                <input type="radio" name="shipping_included" value="true" id="ship_yes">
-                                <label for="ship_yes">택배비 포함 (O)</label>
-                            </td>
-                        </tr>
+                        // Product 테이블에 'user_id' 컬럼이 있다고 가정
+                        String sql = "SELECT product_id, product_name, price, main_image_url FROM Product WHERE user_id = ? ORDER BY created_at DESC";
+                        pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, userId); 
+                        rs = pstmt.executeQuery();
+
+                        while (rs.next()) {
+                            hasProducts = true;
+                            String pName = rs.getString("product_name");
+                            int pPrice = rs.getInt("price");
+                            String pImage = rs.getString("main_image_url");
+                            int pId = rs.getInt("product_id");
+                            
+                            // 이미지 경로 처리
+                            if (pImage == null || pImage.trim().isEmpty()) {
+                                pImage = request.getContextPath() + "/images/logo.png"; // (임시) 기본 이미지
+                            } else {
+                                pImage = request.getContextPath() + pImage; 
+                            }
+                %>
+                        <div class="product-list-item">
+                            <img src="<%= pImage %>" alt="<%= pName %>">
+                            <div class="info">
+                                <div class="name">
+                                    <a href="product_detail.jsp?product_id=<%= pId %>">
+                                        <%= pName %>
+                                    </a>
+                                </div>
+                                <div class="price">가격: <%= pPrice %>원</div>
+                            </div>
+                            <a href="product_edit.jsp?product_id=<%= pId %>" class="edit-btn">수정</a>
+                        </div>
+                <%
+                        } // end while
                         
-                        <tr>
-                            <th>상품 이미지</th>
-                            <td class="image-upload-area">
-                                <div>
-                                    <label>대표 이미지 (1장)</label><br>
-                                    <input type="file" name="main_image" accept="image/*" required>
-                                </div>
-                                <div>
-                                    <label>상세 이미지 (선택, 최대 4장)</label><br>
-                                    <input type="file" name="detail_image1" accept="image/*">
-                                    <input type="file" name="detail_image2" accept="image/*">
-                                    <input type="file" name="detail_image3" accept="image/*">
-                                    <input type="file" name="detail_image4" accept="image/*">
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>상품 설명</th>
-                            <td>
-                                <textarea name="description" placeholder="상품에 대한 설명을 입력하세요..."></textarea>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-                
-                <div class="form-buttons">
-                    <input type="button" value="취소" onclick="history.back()">
-                    <input type="submit" value="등록하기">
-                </div>
-            </form>
+                        if (!hasProducts) {
+                            out.println("<p>등록된 상품이 없습니다.</p>");
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        out.println("<p style='color:red;'>상품 목록을 불러오는 중 오류가 발생했습니다. (DB: " + e.getMessage() + ")</p>");
+                    } finally {
+                        if (rs != null) try { rs.close(); } catch (SQLException ignore) {}
+                        if (pstmt != null) try { pstmt.close(); } catch (SQLException ignore) {}
+                        if (conn != null) try { conn.close(); } catch (SQLException ignore) {}
+                    }
+                %>
+            </div>
+
+            <h2 style="margin-top: 40px;">최근 본 상품</h2>
+            <div class="recent-product-grid">
+                <%-- (추후 구현) "최근 본 상품"은 쿠키/세션으로 구현 --%>
+                <% for (int i = 0; i < 4; i++) { %>
+                    <div class="recent-product-card">
+                        <div class="img-placeholder"></div>
+                        <p>최근 본 상품 <%= i+1 %></p>
+                    </div>
+                <% } %>
+            </div>
             
         </main>
     </div>
@@ -473,15 +441,18 @@
 		<div style="display: flex; gap: 40px;">
     		<div class="footer-section">
         		<h4>ABOUT</h4>
-        		<a href="#"> <%= companyIntro %> </a><br>
-        		<a href="#"> <%= notice %> </a><br>
+        		<a href="company_intro.jsp"> <%= companyIntro %> </a><br>
+        		<a href="notice_list.jsp"> <%= notice %> </a><br>
     		</div>
     		<div class="footer-section">
         		<h4>SUPPORT</h4>
         		<a href="#"> <%= question %> </a><br>
         		<a href="#"> <%= faq %> </a>
+                
+                <%-- ✨ (오류 수정) 'isAdmin' 변수 선언 추가 --%>
                 <%
                     String isAdmin = (String) session.getAttribute("isAdmin");
+                    
                     if (isAdmin != null && isAdmin.equals("true")) {
                 %>
                     <br>

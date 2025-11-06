@@ -441,8 +441,8 @@
 		<div style="display: flex; gap: 40px;">
     		<div class="footer-section">
         		<h4>ABOUT</h4>
-        		<a href="#"> <%= companyIntro %> </a><br>
-        		<a href="#"> <%= notice %> </a><br>
+        		<a href="company_intro.jsp"> <%= companyIntro %> </a><br>
+        		<a href="notice_list.jsp"> <%= notice %> </a><br>
     		</div>
     		<div class="footer-section">
         		<h4>SUPPORT</h4>

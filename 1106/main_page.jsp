@@ -320,12 +320,6 @@
                 <div class="welcome-message">
                     <%= (String)session.getAttribute("userName") %>님, 환영합니다.
                 </div>
-
-                <input type="button" value="" onclick="location.href='notifications.jsp'"
-                    style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
-                    background-size: contain;
-                    width: 40px; height: 40px; border: none; cursor: pointer;"
-                />
                 
                 <div class="dropdown">
                     <img src="<%= request.getContextPath() %>/images/user.png" alt="User" class="dropdown-toggle" onclick="toggleDropdown()">
@@ -335,6 +329,12 @@
                         <a href="logout.jsp">로그아웃</a>
                     </div>
                 </div>
+                
+                <input type="button" value="" onclick="location.href='notifications.jsp'"
+                    style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
+                    background-size: contain;
+                    width: 40px; height: 40px; border: none; cursor: pointer;"
+                />
                 
             <%
             }
@@ -475,8 +475,8 @@
         <div style="display: flex; gap: 40px;">
             <div class="footer-section">
                 <h4>ABOUT</h4>
-                <a href="#"> <%= companyIntro %> </a><br>
-                <a href="#"> <%= notice %> </a><br>
+                <a href="company_intro.jsp"> <%= companyIntro %> </a><br>
+                <a href="notice_list.jsp"> <%= notice %> </a><br>
             </div>
             <div class="footer-section">
                 <h4>SUPPORT</h4>

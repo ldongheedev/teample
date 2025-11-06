@@ -1,9 +1,10 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-<%@ page import="java.sql.*" %> <%-- ✨ 1. DB 연동을 위해 import (회원/상품 목록 조회 시 필요) --%>
+<%@ page import="java.sql.*" %>
 
 <%
-    // ✨ 2. (보안) 관리자 세션 확인
+    // ✨ 1. (보안) 관리자 세션 확인
     String isAdmin = (String) session.getAttribute("isAdmin");
+    String userName = (String) session.getAttribute("userName"); // ✨ 관리자 닉네임(이름) 가져오기
     
     // 세션이 없거나, "true"가 아니면
     if (isAdmin == null || !isAdmin.equals("true")) {
@@ -34,7 +35,7 @@
             color: #333;
         }
 
-        /* --- ✨ 3. 헤더 스타일 (main_page.jsp에서 복사) --- */
+        /* --- 1. 헤더 스타일 --- */
         header {
             display: flex;
             justify-content: space-between;
@@ -100,63 +101,69 @@
             display: block;
         }
 
-        /* --- ✨ 4. 관리자 페이지 레이아웃 (신규) --- */
+        /* --- 2. 관리자 페이지 레이아웃 --- */
         .admin-wrapper {
             display: flex;
-            max-width: 1400px; /* 최대 너비 */
-            min-height: 70vh; /* 최소 높이 */
-            margin: 20px auto; /* 중앙 정렬 */
-            gap: 20px; /* 사이드바와 컨텐츠 간격 */
+            max-width: 1400px;
+            min-height: 70vh;
+            margin: 20px auto;
+            gap: 20px;
         }
 
         /* 관리자 사이드바 */
         .admin-sidebar {
             width: 220px;
-            flex-shrink: 0; /* 줄어들지 않음 */
+            flex-shrink: 0;
             background-color: #ffffff;
-            padding: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            padding: 20px 0;
             border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            align-self: flex-start;
         }
+
         .admin-sidebar h3 {
-            font-size: 18px;
-            color: #333;
-            margin-top: 0;
-            margin-bottom: 10px;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 10px;
+            font-size: 16px;
+            color: #2c7be5;
+            padding: 10px 20px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #eee;
         }
+
         .admin-sidebar ul {
             list-style: none;
             padding: 0;
-            margin: 0 0 20px 0;
+            margin: 0;
         }
+
         .admin-sidebar li a {
             display: block;
-            padding: 12px 15px;
+            padding: 12px 20px;
             text-decoration: none;
-            color: #555;
-            font-size: 15px;
-            border-radius: 6px;
+            color: #333;
+            font-size: 14px;
+            transition: background-color 0.1s;
         }
+
         .admin-sidebar li a:hover {
             background-color: #f5f5f5;
         }
+        
         .admin-sidebar li.active a {
-            background-color: #2c7be5; /* 활성 메뉴 색상 */
+            background-color: #2c7be5;
             color: white;
             font-weight: 500;
         }
 
         /* 관리자 컨텐츠 영역 */
         .admin-content {
-            flex-grow: 1; /* 남은 공간 모두 차지 */
+            flex-grow: 1;
             background-color: #ffffff;
             padding: 30px 40px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.05);
             border-radius: 8px;
         }
-        
+
         .admin-header {
             display: flex;
             justify-content: space-between;
@@ -165,14 +172,14 @@
             padding-bottom: 10px;
             margin-bottom: 25px;
         }
-        
+
         .admin-header h2 {
             font-size: 24px;
             margin: 0;
         }
-        
+
         .delete-btn {
-            background-color: #d9534f; /* 삭제 버튼 (빨간색) */
+            background-color: #d9534f;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -184,43 +191,40 @@
         .delete-btn:hover {
             background-color: #c9302c;
         }
-
-        /* 관리자용 상품 그리드 (스토리보드 69p 참고) */
-        .product-grid-admin {
+        
+        /* 상품 카드 영역 (더미 데이터용) */
+        .product-list-admin {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 20px;
         }
-        
         .product-card-admin {
-            border: 1px solid #eee;
-            border-radius: 8px;
+            border: 1px solid #ddd;
             padding: 15px;
-            background-color: #fafafa;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .product-card-admin .img-placeholder {
+        .img-placeholder {
             width: 100%;
             height: 150px;
-            background-color: #e0e0e0;
-            border-radius: 6px;
+            background-color: #eee;
             margin-bottom: 10px;
+            border-radius: 4px;
         }
         .product-card-admin p {
-            margin: 5px 0 0 0;
+            margin: 5px 0;
             font-size: 14px;
-            color: #333;
         }
         .product-card-admin .price {
-            font-weight: bold;
-            font-size: 15px;
+            font-weight: 700;
+            color: #2c7be5;
         }
-        .product-card-admin .checkbox-area {
-            display: flex;
-            justify-content: flex-end;
+        .checkbox-area {
             margin-top: 10px;
         }
 
-        /* --- ✨ 5. 푸터 스타일 (main_page.jsp에서 복사) --- */
+        /* --- 3. 푸터 스타일 --- */
         footer {
             background-color: #f1f1f1;
             padding: 40px;
@@ -228,14 +232,26 @@
             justify-content: space-between;
             font-size: 14px;
             color: #555;
-            margin-top: 50px; /* 컨텐츠와 간격 */
+            margin-top: 40px;
         }
-        .footer-section h4 { ... }
-        .footer-section p, .footer-section a { ... }
-        .admin-link { ... }
-        .admin-link:hover { ... }
+        .footer-section h4 {
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .footer-section p,
+        .footer-section a {
+            margin: 4px 0;
+            text-decoration: none;
+            color: #555;
+        }
+        .admin-link {
+            font-weight: bold;
+            color: #2c7be5; 
+            margin-top: 10px;
+            display: inline-block;
+        }
     </style>
-    
+
     <script>
         function toggleDropdown() {
             document.getElementById("myDropdown").classList.toggle("show");
@@ -255,56 +271,79 @@
     </script>
 </head>
 <body>
+
     <header>
         <div class="logo">
             <a href="main_page.jsp">
-    		    <img src="<%= request.getContextPath() %>/images/logo.png" style="height: 60px; width: 200px; object-fit: contain;">
+                <img src="<%= request.getContextPath() %>/images/logo.png" style="height: 60px; width: 200px; object-fit: contain;" alt="중고모아 로고">
             </a>
-		</div>
+        </div>
         <div class="header-links">
             <div class="welcome-message">
-                <%= (String)session.getAttribute("userName") %>님 (관리자), 환영합니다.
+                관리자 <%= userName %>님, 환영합니다.
             </div>
+
+            <input type="button" value="" onclick="location.href='notifications.jsp'"
+                style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
+                background-size: contain;
+                width: 40px; height: 40px; border: none; cursor: pointer;"
+            />
+            
             <div class="dropdown">
                 <img src="<%= request.getContextPath() %>/images/user.png" alt="User" class="dropdown-toggle" onclick="toggleDropdown()">
+                
                 <div id="myDropdown" class="dropdown-content">
-                    <a href="#">마이페이지</a>
+                    <a href="mypage.jsp">마이페이지</a>
                     <a href="logout.jsp">로그아웃</a>
+                    <a href="product_add_form.jsp">상품 등록</a>
                 </div>
             </div>
-            <input type="button" value="" onclick="location.href='notifications.jsp'"
-               style="background: url('<%= request.getContextPath() %>/images/bell.png') no-repeat center;
-               background-size: contain; width: 40px; height: 40px; border: none; cursor: pointer;" />
         </div>
     </header>
-    
+
     <div class="admin-wrapper">
-        
         <nav class="admin-sidebar">
+            <h3>회원 관리</h3>
+            <ul>
+                <li class="active"><a href="#">회원 목록</a></li>
+                <li><a href="#">회원 정지/탈퇴</a></li>
+            </ul>
+            
             <h3>상품 관리</h3>
             <ul>
-                <li class="active"><a href="admin_page.jsp">상품 삭제</a></li> 
-                <li><a href="#">상품 정보 수정</a></li> </ul>
-            
-            <h3>고객 센터</h3> <ul>
-                <li><a href="#">1:1 문의</a></li> <li><a href="#">FAQ</a></li> <li><a href="#">공지사항</a></li> </ul>
-            
-            <h3>통계</h3> <ul>
-                <li><a href="#">전체 통계</a></li> </ul>
+                <li><a href="#">상품 목록</a></li>
+                <li><a href="#">상품 등록 (미사용)</a></li>
+            </ul>
+
+            <h3>고객 지원</h3>
+            <ul>
+                <li><a href="#">1:1 문의</a></li>
+                <li><a href="#">FAQ</a></li>
+                <li><a href="notice_list.jsp">공지사항</a></li> 
+            </ul>
+
+            <h3>통계</h3>
+            <ul>
+                <li><a href="#">전체 통계</a></li>
+            </ul>
         </nav>
         
         <main class="admin-content">
-            
             <div class="admin-header">
-                <h2>상품 삭제</h2> <button class="delete-btn" onclick="alert('삭제 확인 창 (추후 구현)')">삭제하기</button> </div>
+                <h2>상품 삭제</h2>
+                <button class="delete-btn" onclick="alert('삭제 확인 창 (추후 구현)')">삭제하기</button>
+            </div>
             
-            <div class="product-grid-admin">
-                <%-- (DB 연동) 나중에 DB에서 실제 상품 목록을 불러와 반복 --%>
+            <div class="product-list-admin">
                 <% for (int i = 0; i < 6; i++) { %>
                     <div class="product-card-admin">
                         <div class="img-placeholder"></div>
-                        <p>상품이름 [<%= i+1 %>]</p> <p>상품분류</p> <p class="price">가격</p> <div class="checkbox-area">
-                            <input type="checkbox"> </div>
+                        <p>상품이름 [<%= i+1 %>]</p>
+                        <p>상품분류</p>
+                        <p class="price">가격</p>
+                        <div class="checkbox-area">
+                            <input type="checkbox">
+                        </div>
                     </div>
                 <% } %>
             </div>
@@ -314,7 +353,7 @@
 
     <footer>
         <div class="footer-section">
-            <img src="<%= request.getContextPath() %>/images/logo2.png" style="height: 80px; width: 200px; float: left;" />
+            <img src="<%= request.getContextPath() %>/images/logo2.png" style="height: 80px; width: 200px; float: left;" alt="로고2" />
             <p>(주) 중고모아 | 대표 김령균</p>
             <p>TEL : 010-0000-0000</p>
             <p>Mail : junggomoa@gmail.com</p>
@@ -330,8 +369,8 @@
 		<div style="display: flex; gap: 40px;">
     		<div class="footer-section">
         		<h4>ABOUT</h4>
-        		<a href="#"> <%= companyIntro %> </a><br>
-        		<a href="#"> <%= notice %> </a><br>
+        		<a href="company_intro.jsp"> <%= companyIntro %> </a><br>
+        		<a href="notice_list.jsp"> <%= notice %> </a><br>
     		</div>
     		<div class="footer-section">
         		<h4>SUPPORT</h4>
@@ -342,6 +381,6 @@
     		</div>
 		</div>
     </footer>
-    
-    </body>
+
+</body>
 </html>

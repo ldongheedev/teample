@@ -1,6 +1,7 @@
 <%-- (신규 파일) member_check_pw_action.jsp --%>
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 세션에서 사용자 ID 가져오기
@@ -23,8 +24,7 @@
     String dbPassword = null;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
 
         // 3. DB에서 현재 사용자의 비밀번호 조회
         String sql = "SELECT pw FROM member WHERE id = ?";

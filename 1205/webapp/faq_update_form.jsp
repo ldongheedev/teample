@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. (보안) 관리자 세션 확인
@@ -31,8 +32,7 @@
     ResultSet rs = null;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         String sql = "SELECT category, question, answer FROM Faq WHERE faq_id = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, faq_id);

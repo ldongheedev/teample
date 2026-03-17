@@ -3,6 +3,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 관리자 권한 확인
@@ -30,8 +31,7 @@
     List<String> allCategoryNames = new ArrayList<>();
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         
         // 카테고리 목록 확보
         String catSql = "SELECT category_name FROM category ORDER BY sort_order ASC"; 

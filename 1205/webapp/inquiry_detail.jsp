@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String userId = (String) session.getAttribute("userId");
@@ -28,8 +29,7 @@
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         
         String sql = "SELECT * FROM Inquiry WHERE inquiry_id = ?";
         pstmt = conn.prepareStatement(sql);

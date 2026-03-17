@@ -6,6 +6,7 @@
 <%@ page import="java.io.InputStream" %>
 <%@ page import="org.json.simple.JSONObject" %>
 <%@ page import="org.json.simple.parser.JSONParser" %>
+<%@ page import="util.ConfigLoader" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
@@ -14,12 +15,10 @@
   </head>
   <body>
   <%
-    // ✨ 클라이언트 정보 설정
-    String clientId = "SzhvAQKSGeClXT4Qe7H2";
-    String clientSecret = "D6YeFGYlTm";
-    
-    // ✨ 콜백 URL 설정 (naverlogin.jsp와 동일해야 함)
-    String callbackUrl = "http://localhost:8090/teamProjectPr/naver_callback.jsp";
+    // ✨ 환경설정에서 클라이언트 정보 읽기
+    String clientId = ConfigLoader.getProperty("naver.client.id");
+    String clientSecret = ConfigLoader.getProperty("naver.client.secret");
+    String callbackUrl = ConfigLoader.getProperty("naver.callback.url");
     String redirectURI = URLEncoder.encode(callbackUrl, "UTF-8");
     
     // 네이버로부터 받은 파라미터

@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.io.File" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -39,8 +40,7 @@
     String notiSql = "INSERT INTO Notification (user_id, type, message, url, created_at) VALUES (?, 'DELETE', ?, 'customer?cmd=inquiryList', NOW())";
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         conn.setAutoCommit(false); // 트랜잭션 시작
 
         // 쿼리 준비

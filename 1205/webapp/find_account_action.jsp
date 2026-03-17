@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -18,9 +19,8 @@
     String resultLabel = ""; // "아이디" 또는 "비밀번호"
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
         // 기존 프로젝트 DB 설정 유지 (포트 3308, jspdb, jsp/1234)
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
 
         if ("find_id".equals(mode)) {
             // 아이디 찾기 로직

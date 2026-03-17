@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, java.util.*, java.text.DecimalFormat" %>
 <%@ page import="util.DBManager" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // ✨ [리팩토링] 메인 페이지용 상품 목록 조회 (DBManager 사용)

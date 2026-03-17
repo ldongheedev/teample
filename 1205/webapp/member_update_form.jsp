@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*, util.DBManager, dto.MemberDTO, dao.MemberDAO" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 비밀번호 인증 확인 (인증 안했으면 튕겨냄)

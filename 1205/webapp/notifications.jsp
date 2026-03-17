@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, dto.TradeDTO, dto.NotificationDTO, java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 <%
     // 리스트 데이터
     List<TradeDTO> receivedList = (List<TradeDTO>) request.getAttribute("receivedList");

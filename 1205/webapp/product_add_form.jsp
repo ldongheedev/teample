@@ -2,7 +2,8 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %> 
 <%@ page import="java.util.ArrayList" %>
-<%@ page import="java.lang.StringBuilder" %> 
+<%@ page import="java.lang.StringBuilder" %>
+<%@ page import="util.DBConnection" %> 
 
 <%
     // 1. (보안) 로그인 세션 확인
@@ -25,8 +26,7 @@
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         String sql = "SELECT category_id, category_name FROM category WHERE is_active = TRUE ORDER BY sort_order, category_name";
         pstmt = conn.prepareStatement(sql);
         rs = pstmt.executeQuery();

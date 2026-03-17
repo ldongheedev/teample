@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="application/json; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 <%
     // 세션에서 사용자 ID 가져오기
     String userId = (String) session.getAttribute("userId");
@@ -31,8 +32,7 @@
     ResultSet rs = null;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         // 트랜잭션 관리 시작
         conn.setAutoCommit(false);
 

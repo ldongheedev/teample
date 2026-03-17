@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 관리자 권한 확인
@@ -217,8 +218,7 @@
                         PreparedStatement pstmtCat = null;
                         ResultSet rsCat = null;
                         try {
-                            Class.forName("org.mariadb.jdbc.Driver");
-                            connCat = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                            connCat = DBConnection.getConnection();
                             String sqlCat = "SELECT category_id, category_name FROM category ORDER BY sort_order";
                             pstmtCat = connCat.prepareStatement(sqlCat);
                             rsCat = pstmtCat.executeQuery();
@@ -256,8 +256,7 @@
                         DecimalFormat formatter = new DecimalFormat("#,###");
                         
                         try {
-                            Class.forName("org.mariadb.jdbc.Driver");
-                            conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                            conn = DBConnection.getConnection();
                             
                             // ✨ 동적 쿼리 작성 (검색 조건 반영)
                             String sql = "SELECT p.product_id, p.product_name, p.price, p.main_image_url, m.nickname " + 

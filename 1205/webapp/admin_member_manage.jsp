@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
 <%@ page import="java.util.Date" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String isAdmin = (String) session.getAttribute("isAdmin");
@@ -244,8 +245,7 @@
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         SimpleDateFormat dateFmt = new SimpleDateFormat("yy-MM-dd HH:mm");
                         try {
-                            Class.forName("org.mariadb.jdbc.Driver");
-                            conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                            conn = DBConnection.getConnection();
                             
                             String sql = "SELECT * FROM member WHERE id LIKE ? OR nickname LIKE ? ORDER BY id DESC";
                             pstmt = conn.prepareStatement(sql);

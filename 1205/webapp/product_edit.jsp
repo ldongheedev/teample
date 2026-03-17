@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %> 
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="java.lang.StringBuilder" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String userId = (String) session.getAttribute("userId");
@@ -40,8 +41,7 @@ int pPrice = 0;
     ArrayList<String> pDetailImages = new ArrayList<>();
     StringBuilder categoryOptions = new StringBuilder();
 try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
 String sql = "SELECT * FROM Product WHERE product_id = ? AND user_id = ?";
         pstmt = conn.prepareStatement(sql);
         pstmt.setInt(1, pId);

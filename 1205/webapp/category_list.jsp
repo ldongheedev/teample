@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.util.HashMap" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // URL에서 category_id 파라미터 받기
@@ -452,8 +453,7 @@
                 sql += "ORDER BY created_at DESC LIMIT 20";
                 
                 try {
-                    Class.forName("org.mariadb.jdbc.Driver");
-                    conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                    conn = DBConnection.getConnection();
                     
                     pstmt = conn.prepareStatement(sql);
                     

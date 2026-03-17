@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     request.setCharacterEncoding("UTF-8");
@@ -27,8 +28,7 @@
     PreparedStatement notiPstmt = null;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         conn.setAutoCommit(false); // 트랜잭션 시작
 
         if ("warn".equals(cmd)) {

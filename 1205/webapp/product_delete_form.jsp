@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String userId = (String) session.getAttribute("userId");
@@ -352,8 +353,7 @@ PreparedStatement pstmt = null;
                         boolean hasProducts = false;
                         DecimalFormat formatter = new DecimalFormat("#,###");
 try {
-                            Class.forName("org.mariadb.jdbc.Driver");
-conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                            conn = DBConnection.getConnection();
                             
                             String sql = "SELECT product_id, product_name, price, main_image_url FROM Product WHERE user_id = ? ORDER BY created_at DESC";
 pstmt = conn.prepareStatement(sql);

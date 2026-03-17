@@ -2,6 +2,7 @@
 <%@ page trimDirectiveWhitespaces="true" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.io.*" %>
+<%@ page import="util.DBConnection" %>
 <%
     String nickname = request.getParameter("nickname");
 
@@ -18,10 +19,7 @@
     boolean isDuplicated = false;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection(
-            "jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234"
-        );
+        conn = DBConnection.getConnection();
         
         String sql = "SELECT COUNT(*) FROM member WHERE nickname = ?";
         pstmt = conn.prepareStatement(sql);

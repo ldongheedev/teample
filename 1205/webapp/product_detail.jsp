@@ -6,6 +6,7 @@
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.net.URLDecoder" %>
 <%@ page import="util.DBManager" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String currentUserId = (String) session.getAttribute("userId");

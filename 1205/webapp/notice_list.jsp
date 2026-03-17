@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, dto.NoticeDTO, java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 <%
     // Controller에서 보내준 데이터 받기
     List<NoticeDTO> noticeList = (List<NoticeDTO>) request.getAttribute("noticeList");

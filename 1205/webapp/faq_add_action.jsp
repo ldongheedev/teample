@@ -2,6 +2,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.io.UnsupportedEncodingException" %>
 <%@ page import="java.net.URLEncoder" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // ... (파일 상단의 관리자 체크 및 파라미터 받는 로직은 동일) ...
@@ -22,8 +23,7 @@
     PreparedStatement pstmt = null;
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         
         String sql = "INSERT INTO Faq (category, question, answer) VALUES (?, ?, ?)";
         pstmt = conn.prepareStatement(sql);

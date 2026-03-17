@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. (보안) 관리자 세션 확인

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 관리자 권한 확인
@@ -175,8 +176,7 @@
                         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
                         
                         try {
-                            Class.forName("org.mariadb.jdbc.Driver");
-                            conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                            conn = DBConnection.getConnection();
                             
                             // ✨ DB 컬럼 추가 반영: created_at으로 정렬
                             String sql = "SELECT * FROM member WHERE (id LIKE ? OR nickname LIKE ?) ORDER BY created_at DESC";

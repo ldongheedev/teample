@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String userId = (String) session.getAttribute("userId");

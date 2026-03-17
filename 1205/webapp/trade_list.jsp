@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, dto.TradeDTO" %>
+<%@ page import="util.DBConnection" %>
 <%
     // Controller에서 데이터 받기
     List<TradeDTO> tradeList = (List<TradeDTO>) request.getAttribute("tradeList");

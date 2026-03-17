@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, dto.InquiryDTO, java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 <%
     // Controller에서 데이터 받기
     List<InquiryDTO> inquiryList = (List<InquiryDTO>) request.getAttribute("inquiryList");

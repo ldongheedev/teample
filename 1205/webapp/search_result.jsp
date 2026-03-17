@@ -1,6 +1,7 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // URL에서 검색어 (query) 파라미터 받기
@@ -417,8 +418,7 @@
                              "ORDER BY created_at DESC"; 
                 
                 try {
-                    Class.forName("org.mariadb.jdbc.Driver");
-                    conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+                    conn = DBConnection.getConnection();
                     
                     pstmt = conn.prepareStatement(sql);
                     // LIKE 검색을 위해 '%'를 검색어 앞뒤에 추가

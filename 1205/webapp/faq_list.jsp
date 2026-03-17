@@ -5,6 +5,7 @@
 <%@ page import="java.util.Map" %>
 <%@ page import="java.net.URLEncoder" %>
 <%@ page import="java.text.DecimalFormat" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 관리자 여부 확인 (버튼 표시용)
@@ -29,8 +30,7 @@
     }
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         
         String sql = "SELECT faq_id, category, question, answer FROM Faq WHERE category = ? ORDER BY faq_id DESC";
         pstmt = conn.prepareStatement(sql);

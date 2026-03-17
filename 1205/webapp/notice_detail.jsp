@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%@ page import="dto.NoticeDTO, java.text.SimpleDateFormat" %>
+<%@ page import="util.DBConnection" %>
 <%
     // ✨ 컨트롤러가 보내준 데이터("notice") 받기
     NoticeDTO notice = (NoticeDTO) request.getAttribute("notice");

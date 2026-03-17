@@ -3,6 +3,7 @@
 <%@ page import="java.sql.*" %>
 <%@ page import="java.text.DecimalFormat" %>
 <%@ page import="java.util.*" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     String userId = (String) session.getAttribute("userId");
@@ -24,8 +25,7 @@
     DecimalFormat formatter = new DecimalFormat("#,###");
 
     try {
-        Class.forName("org.mariadb.jdbc.Driver");
-        conn = DriverManager.getConnection("jdbc:mariadb://localhost:3308/jspdb", "jsp", "1234");
+        conn = DBConnection.getConnection();
         
         // 찜한 상품 목록을 Product 테이블과 JOIN하여 가져옴
         String sql = "SELECT p.product_id, p.product_name, p.price, p.main_image_url " +

@@ -4,6 +4,7 @@
 <%@ page import="java.util.*" %>
 <%@ page import="java.net.URLDecoder" %>
 <%@ page import="util.DBManager" %>
+<%@ page import="util.DBConnection" %>
 
 <%
     // 1. 로그인 체크
